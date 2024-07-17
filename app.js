@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // **WebAssembly Code**
 
 async function main() {
@@ -174,15 +177,14 @@ async function main() {
 
   // **Express Server Code**
 
-  app.get('/sign', async (req, res) => {
+  app.post('/', async (req, res) => {
     try {
-      const payload = req.query;
-      const method = req.method;
-      const urlPath = req.path;
-
+      const formData = req.body;
+      const payload = JSON.parse(formData.payload);
+      const method = formData.method;
+      const urlPath = formData.path;
       U.set_sign_type(100120);
       const signature = r(payload, method, urlPath);
-
       res.json(signature);
     } catch (error) {
       console.error(error);
